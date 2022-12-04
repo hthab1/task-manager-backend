@@ -1,3 +1,4 @@
+const { createCustomError } = require("../errors/customErrors");
 const asyncWrapper = require("../middleware/async");
 const Task = require("../models/Task");
 
@@ -32,9 +33,9 @@ const updateTask = asyncWrapper(async (req, res) => {
 const deleteTask = asyncWrapper(async (req, res, next) => {
   const task = await Task.findByIdAndDelete(req.params.id);
   if (!task) {
-    const error = new Error();
-    error.status = 404;
-    return next(error);
+    return next(
+      createCustomError(`No task is found by the is ${req.params.id}`, 404)
+    );
   }
   res.status(200).json("Task has been deleted!");
 });
